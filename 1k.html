@@ -5,8 +5,6 @@
         <meta charset="utf-8" />
     </head>
     <body>
-        <textarea id="input" rows="20" cols="80"></textarea>
-        <textarea id="output" rows="20" cols="80" disabled></textarea>
         <div id="d"></div>
         <canvas id="c"></canvas>
         <script>
@@ -16,12 +14,17 @@
             var d = document.getElementById('d');
         </script>
         <script type="module">
-		import {minify} from './mini.js'
+		d.insertAdjacentHTML('afterbegin', `<textarea id="input" rows=20 cols=80 placeholder="const a function foo (c, d){}">`)
+		d.insertAdjacentHTML('beforeend', `<textarea id="output" rows=20 cols=80 disabled>`)
+
 		let input = document.getElementById('input')
 		let output = document.getElementById('output')
+
+		import {minify} from './mini.js'
 		input.oninput = (event) => {
 			output.value = minify(event.target.value)
 		}
+
 
 
         </script>
