@@ -26,9 +26,22 @@ if (typeof Deno !== "undefined") {
 	})
 
 	Deno.test("minify spaces in function arguments", () => {
-		const code = `function hello (a, b)`
+		{
+			const code = `function hello (a, b)`
+			const minified = minify(code)
+			assertEquals(minified, `function hello(a,b)`)
+		}
+		{
+			const code = `function hello (a, b, c, d)`
+			const minified = minify(code)
+			assertEquals(minified, `function hello(a,b,c,d)`)
+		}
+	})
+
+	Deno.test("minify whitespace between comma-separated identifiers", () => {
+		const code = `a, b, c,   d`
 		const minified = minify(code)
-		assertEquals(minified, `function hello(a,b)`)
+		assertEquals(minified, `a,b,c,d`)
 	})
 
 	Deno.test("minify multiple lines", () => {
@@ -59,7 +72,7 @@ return a+b
 
 export function minify(code) {
 	/** transformations*/
-	const ts = [minifyMultipleLines, minifyConst, minifySpacesInAssignment, minifySpacesInFunctionArguments]
+	const ts = [minifyMultipleLines, minifyConst, minifySpacesInAssignment, minifyWhitespaceInCommas, minifySpacesInFunctionArguments]
 	ts.forEach(t => code = t(code))
 	return code
 }
@@ -72,9 +85,13 @@ function minifyConst(code) {
 	return code.replace(/const/g, 'let')
 }
 
+function minifyWhitespaceInCommas(code) {
+	return code.replace(/,\s+/g, ',')
+}
+
 function minifySpacesInFunctionArguments(code) {
 	const noSpacesBetweenParens = code.replace(/function (\w[\d\w]*)\s*\(([\w\s,]*)\)/g, 'function $1($2)')
-	return noSpacesBetweenParens.replace(/\((\w+),\s*(\w+)\)/g, '($1,$2)')
+	return noSpacesBetweenParens
 }
 
 function minifyMultipleLines(code) {
@@ -86,6 +103,7 @@ function minifyMultipleLines(code) {
 - [x] minify spaces in assignment
 - [x] minify const
 - [x] minify spaces in function arguments
+  - [q] minify spaces with >3 function arguments
 - [x] minify multiple lines
 - [x] minify function
 
