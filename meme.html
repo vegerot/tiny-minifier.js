@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <title>1kb challenge (meme)</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <div id="d"></div>
+        <canvas id="c"></canvas>
+        <script>
+            var b = document.body;
+            var c = document.getElementsByTagName('canvas')[0];
+            var a = c.getContext('2d');
+            var d = document.getElementById('d');
+        </script>
+        <script type="module">
+		d.insertAdjacentHTML('afterbegin', `<textarea id="input" rows=20 cols=80 placeholder="const a = function foo (c, d){}">`)
+		d.insertAdjacentHTML('beforeend', `<textarea id="output" rows=20 cols=80 disabled>`)
+
+		let input = document.getElementById('input')
+		let output = document.getElementById('output')
+
+		input.oninput = (event) => {
+			function print(arg) {
+				if (typeof arg === 'function') return
+				output.value = arg
+			}
+			let code = deobscurify(event.target.value)
+			let interpreted = eval(code)
+		}
+
+		function deobscurify(code) {
+			return code
+				.replace("fun", "function")
+				.replace("result", "return")
+		}
+        </script>
+    </body>
+</html>
