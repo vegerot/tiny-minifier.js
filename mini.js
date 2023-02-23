@@ -1,41 +1,49 @@
+if (typeof Deno) {
+	const {assertEquals} = await import( "https://deno.land/std@0.177.0/testing/asserts.ts")
+	Deno.test("minify spaces in assignment", () => {
+		const code = `let a = 1;`
+		const minified = minify(code)
+		assertEquals(minified, `let a=1;`)
+	})
 
+	Deno.test("minifiy const", () => {
+		const code = `const hello='world';`
+		const minified = minify(code)
+		assertEquals(minified, `let hello='world';`)
+	})
 
-import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
-Deno.test("minify spaces in assignment", () => {
-	const code = `let a = 1;`
-	const minified = minify(code)
-	assertEquals(minified, `let a=1;`)
-})
+	Deno.test("minify spaces in function arguments", () => {
+		const code = `function hello (a, b)`
+		const minified = minify(code)
+		assertEquals(minified, `function hello(a,b)`)
+	})
 
-Deno.test("minifiy const", () => {
-	const code = `const hello='world';`
-	const minified = minify(code)
-	assertEquals(minified, `let hello='world';`)
-})
+	Deno.test("minify multiple lines", () => {
+		const code = `let a=1;
+						const hello='world';
+					function hello(a,b)`
+		const minified = minify(code)
+		assertEquals(minified, `let a=1;let hello='world';function hello(a,b)`)
+	})
 
-Deno.test("minify spaces in function arguments", () => {
-	const code = `function hello (a, b)`
-	const minified = minify(code)
-	assertEquals(minified, `function hello(a,b)`)
-})
+	Deno.test('minify all', () => {
+		const code = `let a = 1;
+						  const hello = 'world';
+					function hello (a, b)`
+		const minified = minify(code)
+		assertEquals(minified, `let a=1;let hello='world';function hello(a,b)`)
+	})
+}
 
-Deno.test("minify multiple lines", () => {
-	const code = `let a=1;
-					const hello='world';
-				function hello(a,b)`
-	const minified = minify(code)
-	assertEquals(minified, `let a=1;let hello='world';function hello(a,b)`)
-})
-
-function minify(code) {
+export function minify(code) {
 	/** transformations*/
-	let ts = [minifySpacesInAssignment, minifyConst, minifySpacesInFunctionArguments, minifyMultipleLines]
+	let ts = [minifyMultipleLines, minifyConst, minifySpacesInAssignment, minifySpacesInFunctionArguments]
 	ts.forEach(t => code = t(code))
 	return code
 }
 
 function minifySpacesInAssignment(code) {
-	return code.replace(/let (\w[\d\w]*)\s*=\s*(.*$)/g, 'let $1=$2')
+	return code.replace(/let (\w[\d\w]*)\s*=\s*(.*?);/g, 'let $1=$2;')
 }
 
 function minifyConst(code) {
@@ -55,6 +63,6 @@ function minifyMultipleLines(code) {
 #FEATURES:
 - [x] minify spaces in assignment
 - [x] minify const
-- [] minify spaces in function arguments
+- [x] minify spaces in function arguments
 
  */
