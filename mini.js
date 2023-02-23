@@ -1,4 +1,5 @@
 if (typeof Deno) {
+if (typeof Deno !== "undefined") {
 	const {assertEquals} = await import( "https://deno.land/std@0.177.0/testing/asserts.ts")
 	Deno.test("minify spaces in assignment", () => {
 		const code = `let a = 1;`
