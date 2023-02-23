@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <title>1kb challenge</title>
+        <meta charset="utf-8" />
+    </head>
+	<style>
+	</style>
+    <body>
+		<textarea id="input" rows="20" cols="80"></textarea>
+		<textarea id="output" rows="20" cols="80" disabled></textarea>
+        <div id="d"></div>
+        <canvas id="c"></canvas>
+        <script>
+            var b = document.body;
+            var c = document.getElementsByTagName('canvas')[0];
+            var a = c.getContext('2d');
+            var d = document.getElementById('d');
+        </script>
+        <script type="module">
+		let input = document.getElementById('input')
+		let output = document.getElementById('output')
+		input.oninput = (event) => {
+			output.value = event.target.value
+		}
+
+		import {minify} from './mini.js'
+
+        </script>
+    </body>
+</html>
