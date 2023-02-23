@@ -54,11 +54,10 @@ if (typeof Deno !== "undefined") {
 
 	Deno.test("minify function", () => {
 		const code = `function hello(a,b){
-return a+b
+return a+b;
 }`
 		const minified = minify(code)
-		// TODO: weird
-		assertEquals(minified, `function hello(a,b){;return a+b;}`)
+		assertEquals(minified, `function hello(a,b){return a+b;}`)
 	})
 
 	Deno.test('minify all', () => {
@@ -95,7 +94,10 @@ function minifySpacesInFunctionArguments(code) {
 }
 
 function minifyMultipleLines(code) {
-	return code.replace(/\n\s*/g, ';').replace(/;;/g, ';')
+	return code
+		.replace(/;\n\s*/g, ';')
+		.replace(/;;/g, ';')
+		.replace(/{\n\s*/gm, '{')
 }
 
 /*
@@ -103,7 +105,7 @@ function minifyMultipleLines(code) {
 - [x] minify spaces in assignment
 - [x] minify const
 - [x] minify spaces in function arguments
-  - [q] minify spaces with >3 function arguments
+  - [x] minify spaces with >3 function arguments
 - [x] minify multiple lines
 - [x] minify function
 
