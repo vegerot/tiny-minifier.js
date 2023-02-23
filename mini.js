@@ -69,36 +69,46 @@ return a+b;
 	})
 }
 
-export function minify(code) {
-	/** transformations*/
-	const ts = [minifyMultipleLines, minifyConst, minifySpacesInAssignment, minifyWhitespaceInCommas, minifySpacesInFunctionArguments]
-	ts.forEach(t => code = t(code))
-	return code
+function minify(code) {
+	const ts = [minifyMultipleLines, minifyConst, minifySpacesInAssignment, minifyWhitespaceInCommas, minifySpacesInFunctionArguments];
+	ts.forEach(t => code = t(code));
+	return code;
+	function minifySpacesInAssignment(code) {
+		return code.replace(/(\w[\d\w]*)\s*=\s*(.*?);/g, '$1=$2;');
+	}
+
+	function minifyConst(code) {
+		return code.replace(/const/g, 'let');
+	}
+
+	function minifyWhitespaceInCommas(code) {
+		return code.replace(/,\s+/g, ',');
+	}
+
+	function minifySpacesInFunctionArguments(code) {
+		return code.replace(/function (\w[\d\w]*)\s*\(([\w\s,]*)\)/g, 'function $1($2)');
+	}
+
+	function minifyMultipleLines(code) {
+		return code
+			.replace(/;\n\s*/g, ';')
+			.replace(/;;/g, ';')
+			.replace(/{\n\s*/gm, '{');
+	}
 }
 
-function minifySpacesInAssignment(code) {
-	return code.replace(/(\w[\d\w]*)\s*=\s*(.*?);/g, '$1=$2;')
+export function bootstrap() {
+		d.insertAdjacentHTML('afterbegin', `<textarea id="input" rows=20 cols=80 placeholder="const a = function foo (c, d){}">`)
+		d.insertAdjacentHTML('beforeend', `<textarea id="output" rows=20 cols=80 wrap="off" disabled>`)
+
+		let input = document.getElementById('input')
+		let output = document.getElementById('output')
+
+		input.oninput = (event) => {
+			output.value = minify(event.target.value)
+		}
 }
 
-function minifyConst(code) {
-	return code.replace(/const/g, 'let')
-}
-
-function minifyWhitespaceInCommas(code) {
-	return code.replace(/,\s+/g, ',')
-}
-
-function minifySpacesInFunctionArguments(code) {
-	const noSpacesBetweenParens = code.replace(/function (\w[\d\w]*)\s*\(([\w\s,]*)\)/g, 'function $1($2)')
-	return noSpacesBetweenParens
-}
-
-function minifyMultipleLines(code) {
-	return code
-		.replace(/;\n\s*/g, ';')
-		.replace(/;;/g, ';')
-		.replace(/{\n\s*/gm, '{')
-}
 
 /*
 #FEATURES:
@@ -109,4 +119,15 @@ function minifyMultipleLines(code) {
 - [x] minify multiple lines
 - [x] minify function
 
+# examples
+
+```js
+const a = 1;
+
+const func = function foo (c, d) {};
+
+for (let i=0; i< range(10, 20 ); ++i) {
+	console.log(`hello, ${i}`, i);
+}
+```
  */
