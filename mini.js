@@ -12,6 +12,11 @@ if (typeof Deno !== "undefined") {
 			const minified = minify(code)
 			assertEquals(minified, `aoeu=69;`)
 		}
+		/*{
+			const code = `aoeu = 69`
+			const minified = minify(code)
+			assertEquals(minified, `aoeu=69;`)
+		}*/
 	})
 
 	Deno.test("minifiy const", () => {
