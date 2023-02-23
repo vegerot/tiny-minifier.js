@@ -93,7 +93,9 @@ function minify(code) {
 		return code
 			.replace(/;\n\s*/g, ';')
 			.replace(/;;/g, ';')
-			.replace(/{\n\s*/gm, '{');
+			.replace(/{\n\s*/gm, '{')
+			.replace(/}\n\s*/g, '};')
+			.replace(/\n\s*\./g, '.');
 	}
 }
 
